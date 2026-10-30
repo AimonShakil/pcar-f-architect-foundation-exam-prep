@@ -17,8 +17,8 @@ jobs:
 
       - name: Fail if any non-Markdown file is tracked
         run: |
-          # Allowed exceptions: files that implement the repo rules themselves
-          ALLOW='^(\.gitignore|\.github/workflows/markdown-only\.yml)$'
+          # Allowed exceptions: .gitignore and the .github configuration folder
+          ALLOW='^(\.gitignore|\.github/.*)$'
 
           bad=$(git ls-files | grep -viE '\.md$' | grep -vE "$ALLOW" || true)
 
