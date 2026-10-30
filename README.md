@@ -10,8 +10,17 @@ This repository collects Markdown-based notes, summaries, and practice material 
 
 ```
 .
-└── README.md   # This file
+├── .github/workflows/markdown-only.yml   # CI check enforcing the rule below
+└── README.md                             # This file
 ```
+
+## Repository Rules
+
+- **Markdown only.** Every file in this repo must be a `.md` file. The only
+  exception is the workflow that enforces this rule.
+- **No direct pushes to `main`.** All changes go through a pull request.
+- **Required check.** The `check-file-types` GitHub Actions check must pass
+  before a pull request can be merged.
 
 More topic notes will be added as study progresses.
 

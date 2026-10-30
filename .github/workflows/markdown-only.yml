@@ -1,0 +1,32 @@
+name: Markdown-only check
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-file-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Fail if any non-Markdown file is tracked
+        run: |
+          # Allowed exceptions: files that implement the repo rules themselves
+          ALLOW='^(\.gitignore|\.github/workflows/markdown-only\.yml)$'
+
+          bad=$(git ls-files | grep -viE '\.md$' | grep -vE "$ALLOW" || true)
+
+          if [ -n "$bad" ]; then
+            echo "Only Markdown files are allowed. Offending files:"
+            while read -r f; do
+              echo "::error file=$f::Not a Markdown file: $f"
+            done <<< "$bad"
+            exit 1
+          fi
+          echo "All tracked files are Markdown."
