@@ -11,6 +11,7 @@ This repository collects Markdown-based notes, summaries, and practice material 
 ```
 .
 ├── .github/workflows/markdown-only.yml   # CI check enforcing the rule below
+├── notes/ci-notes.md                     # Continuous Integration notes
 └── README.md                             # This file
 ```
 
