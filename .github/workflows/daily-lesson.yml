@@ -1,0 +1,46 @@
+name: Daily Lesson
+
+on:
+  schedule:
+    # Cron runs in UTC. 16:00 UTC is 21:00 in Pakistan (PKT, UTC+5, no DST).
+    - cron: "0 16 * * *"
+  workflow_dispatch: # Allows a manual run from the Actions tab
+
+# Claude pushes and merges with the Claude GitHub App token, obtained through
+# id-token: write, so GITHUB_TOKEN itself stays read-only.
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  add-lesson:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --max-turns 20
+            --allowedTools "Read,Write,Glob,Grep,Bash(date +%F),Bash(git switch -c lesson/*),Bash(git add lessons/*),Bash(git commit -m *),Bash(git push -u origin lesson/*),Bash(gh pr create --base main *),Bash(gh pr merge lesson/* --auto --squash --delete-branch)"
+          prompt: |
+            Add one study lesson to this PCAR-F Architect Foundation exam-prep repo.
+
+            1. Read README.md, notes/ and lessons/, then choose a useful topic that
+               is not already covered.
+            2. Get today's date with `date +%F`, then write one new file:
+               lessons/<date>-<short-topic-slug>.md
+               Follow the style of notes/ci-notes.md and keep it to a 10-minute read.
+               Do not claim anything comes from the official exam objectives, and do
+               not invent statistics or citations.
+            3. Publish it:
+               - git switch -c lesson/<date>-<short-topic-slug>
+               - git add lessons/
+               - git commit -m "Add lesson: <topic>"
+               - git push -u origin lesson/<date>-<short-topic-slug>
+               - gh pr create --base main --title "Lesson: <topic>" --body "<one-line summary>"
+               - gh pr merge lesson/<date>-<short-topic-slug> --auto --squash --delete-branch
+
+            Do not change any other file.

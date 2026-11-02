@@ -12,6 +12,9 @@ on:
 
 jobs:
   claude-review:
+    # Skip Claude's own PRs: the action rejects bot actors, so the check would fail.
+    if: github.event.pull_request.user.login != 'claude[bot]'
+
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
